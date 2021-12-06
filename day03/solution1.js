@@ -1,21 +1,24 @@
 "use strict"
 
+const assert = require('assert');
+
 const { data } = require('./data.json');
+const { example } = require('./example.json');
 
 function flipBits(str) {
     return str.split('').map(b => (1 - b).toString()).join('');
 }
 
-function run() {
-    const length = data.length;
-    const binaryLength = data[0].length;
+function diagnose(report) {
+    const length = report.length;
+    const binaryLength = report[0].length;
     let highestBinary = "";
 
     for (let idx = 0; idx < binaryLength; ++idx) {
         let zeros = 0;
 
         for (let jdx = 0; jdx < length; ++jdx) {
-            if (data[jdx][idx] === "0") ++zeros;
+            if (report[jdx][idx] === "0") ++zeros;
         }
 
         highestBinary += length - zeros > zeros ? "0" : "1";
@@ -24,4 +27,14 @@ function run() {
     return parseInt(highestBinary, 2) * parseInt(flipBits(highestBinary), 2);
 }
 
-console.log(run());
+function run() {
+    const exampleResult = diagnose(example);
+    assert.equal(exampleResult, 198);
+
+    const result = diagnose(data);
+    assert.equal(result, 3882564);
+
+    console.log('Answer:', result);
+}
+
+run();
