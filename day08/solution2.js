@@ -34,13 +34,6 @@ function findDigit(sortedString, discovered) {
         const removedSeven = remove(sortedString, discovered[7]);
         if (removedSeven === 3) return discovered[0] = sortedString;
         else if (removedSeven === 4) return discovered[6] = sortedString;
-
-        const removedThree = remove(sortedString, discovered[3]);
-        if (removedThree === 1) return discovered[9] = sortedString;
-
-        const removedOne = remove(sortedString, discovered[1]);
-        if (removedOne === 4) return discovered[9] = sortedString;
-        else if (removedOne === 5) return discovered[6] = sortedString;
     } else if (stringLength === 5) {
         const removedOne = remove(sortedString, discovered[1]);
         if (removedOne === 3) return discovered[3] = sortedString;
@@ -48,51 +41,43 @@ function findDigit(sortedString, discovered) {
         const removedFour = remove(sortedString, discovered[4]);
         if (removedFour === 2) return discovered[5] = sortedString;
         else if (removedFour === 3) return discovered[2] = sortedString;
-
-        const removedNine = remove(sortedString, discovered[9]);
-        if (removedNine === 0) return discovered[5] = sortedString;
-        else if (removedNine === 1) return discovered[2] = sortedString;
-
-        const removedSix = remove(sortedString, discovered[6]);
-        if (removedSix === 0) return discovered[5] = sortedString;
-        else if (removedSix === 1) return discovered[2] = sortedString;
     }
     else if (stringLength === 4) discovered[4] = sortedString;
     else if (stringLength === 3) discovered[7] = sortedString;
     else if (stringLength === 2) discovered[1] = sortedString;
 }
 
-function getDigitsMapping(codes) {
-    const mappingByNumber = {};
-    while (Object.keys(mappingByNumber).length !== 10) {
-        for (let jdx = 0; jdx < codes.length; ++jdx) {
-            findDigit(codes[jdx], mappingByNumber);
+function getDigitsMapping(signals) {
+    const mappingByDigit = {};
+    while (Object.keys(mappingByDigit).length !== 10) {
+        for (let jdx = 0; jdx < signals.length; ++jdx) {
+            findDigit(signals[jdx], mappingByDigit);
         }
     }
 
-    const mappingByCode = {};
-    Object.values(mappingByNumber).forEach((val, idx) => {
-        mappingByCode[val] = idx;
+    const mappingBySignal = {};
+    Object.values(mappingByDigit).forEach((val, idx) => {
+        mappingBySignal[val] = idx;
     });
 
-    return mappingByCode;
+    return mappingBySignal;
 }
 
 function calculateDigits(values) {
-    const firstPart = values.map(value => { return splitAndSort(0, value); });
-    const secondPart = values.map(value => { return splitAndSort(1, value); });
+    const signals = values.map(value => { return splitAndSort(0, value); });
+    const outputs = values.map(value => { return splitAndSort(1, value); });
 
     let total = 0;
-    for (let idx = 0; idx < firstPart.length; ++idx) {
-        const mapping = getDigitsMapping(firstPart[idx]);
+    for (let idx = 0; idx < signals.length; ++idx) {
+        const mapping = getDigitsMapping(signals[idx]);
 
-        const rightSide = secondPart[idx];
-        const numberResult = [];
-        for (let jdx = 0; jdx < rightSide.length; ++jdx) {
-            numberResult[jdx] = mapping[rightSide[jdx]];
+        const output = outputs[idx];
+        const parsedNumbers = [];
+        for (let jdx = 0; jdx < output.length; ++jdx) {
+            parsedNumbers[jdx] = mapping[output[jdx]];
         }
 
-        total += parseInt(numberResult.join(''));
+        total += parseInt(parsedNumbers.join(''));
     }
     return total;
 }
